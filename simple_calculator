@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .calculator {
+      background: #1f2937;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+
+    .display {
+      background: #111827;
+      color: #fff;
+      font-size: 2rem;
+      padding: 1rem;
+      text-align: right;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      word-wrap: break-word;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    button {
+      padding: 1rem;
+      font-size: 1.25rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      background: #4b5563;
+      color: white;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #6b7280;
+    }
+
+    .operator {
+      background: #2563eb;
+    }
+
+    .clear {
+      background: #dc2626;
+    }
+
+    .equal {
+      background: #10b981;
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="clear" id="clear">C</button>
+      <button class="operator" data-op="/">÷</button>
+      <button class="operator" data-op="*">×</button>
+      <button class="operator" data-op="-">−</button>
+
+      <button class="digit">7</button>
+      <button class="digit">8</button>
+      <button class="digit">9</button>
+      <button class="operator" data-op="+">+</button>
+
+      <button class="digit">4</button>
+      <button class="digit">5</button>
+      <button class="digit">6</button>
+      <button class="equal" id="equal">=</button>
+
+      <button class="digit">1</button>
+      <button class="digit">2</button>
+      <button class="digit">3</button>
+      <button class="digit">0</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const digits = document.querySelectorAll('.digit');
+    const operators = document.querySelectorAll('.operator');
+    const clearBtn = document.getElementById('clear');
+    const equalBtn = document.getElementById('equal');
+
+    let currentInput = '';
+    let operator = '';
+    let firstOperand = '';
+    let resultDisplayed = false;
+
+    digits.forEach(button => {
+      button.addEventListener('click', () => {
+        if (resultDisplayed) {
+          currentInput = '';
+          resultDisplayed = false;
+        }
+        currentInput += button.textContent;
+        display.textContent = currentInput;
+      });
+    });
+
+    operators.forEach(button => {
+      button.addEventListener('click', () => {
+        if (currentInput === '') return;
+        if (firstOperand && operator) {
+          computeResult();
+        }
+        firstOperand = currentInput;
+        operator = button.dataset.op;
+        currentInput = '';
+      });
+    });
+
+    equalBtn.addEventListener('click', () => {
+      if (!firstOperand || !operator || !currentInput) return;
+      computeResult();
+      resultDisplayed = true;
+    });
+
+    clearBtn.addEventListener('click', () => {
+      currentInput = '';
+      firstOperand = '';
+      operator = '';
+      display.textContent = '0';
+    });
+
+    function computeResult() {
+      let result;
+      const a = parseFloat(firstOperand);
+      const b = parseFloat(currentInput);
+      switch (operator) {
+        case '+': result = a + b; break;
+        case '-': result = a - b; break;
+        case '*': result = a * b; break;
+        case '/': result = b !== 0 ? a / b : 'Error'; break;
+      }
+      display.textContent = result;
+      currentInput = result.toString();
+      firstOperand = '';
+      operator = '';
+    }
+  </script>
+
+</body>
+</html>
